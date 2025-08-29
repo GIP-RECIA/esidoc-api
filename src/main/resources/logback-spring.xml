@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright © 2025 GIP-RECIA (https://www.recia.fr/)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<configuration scan="true" scanPeriod="30 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="FILE_LOG_CHARSET" value="utf-8"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <contextName>service-info-api</contextName>
+
+    <!-- | Expose the logback configuration via JMX + -->
+    <jmxConfigurator />
+
+    <!-- | Specify a local property that sets up the logging directory + -->
+    <!-- NOTE set -Dlogback.logfileDirectory=/PATH/ to override the default propety setted in pom.xml -->
+    <property scope="local" name="LOG_DIR" value="${LOG_PATH:-logs}" />
+
+
+    <!-- The FILE and ASYNC appenders are here as examples for a production
+        configuration -->
+
+    <logger name="jdk.event.security" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.boot.autoconfigure" level="ERROR"/>
+    <logger name="org.springframework.security" level="INFO"/>
+    <logger name="org.springframework.security.web" level="INFO"/>
+    <logger name="fr.recia.mediacentre.api" level="DEBUG"/>
+    <logger name="fr.recia.esidoc.api" level="DEBUG"/>
+    <logger name="com.fasterxml.jackson" level="INFO"/>
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${CONTEXT_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}.%d{yyyy-MM-dd}.gz
+            </fileNamePattern>
+            <maxHistory>366</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${FILE_LOG_CHARSET}</charset>
+            <!--            <Pattern>%d %-5level [%thread] %logger: %msg%n</Pattern>-->
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <springProfile name="test | local | dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+
+        <logger name="fr.recia"  level="DEBUG" />
+        <logger name="org.springframework"  level="DEBUG" />
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="FILE" />
+        </root>
+
+        <logger name="fr.recia" level="INFO" />
+
+    </springProfile>
+
+
+
+</configuration>
+
+
+
+        <!--<configuration scan="true">-->
+        <!--<property name="LOG_FILE" value="application-dev.log"/>-->
+        <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
+
+
+        <!--<logger name="org.springframework.web" level="DEBUG"/>-->
+        <!--<logger name="org.springframework.security" level="DEBUG"/>-->
+        <!--<logger name="org.springframework.security.web" level="DEBUG"/>-->
+        <!--<logger name="fr.recia.mediacentre.api" level="DEBUG"/>-->
+        <!--<logger name="com.fasterxml.jackson" level="TRACE"/>-->
+
+
+        <!--<root level="INFO">-->
+        <!--    <appender-ref ref="CONSOLE"/>-->
+        <!--</root>-->
+
+
+        <!--</configuration>-->

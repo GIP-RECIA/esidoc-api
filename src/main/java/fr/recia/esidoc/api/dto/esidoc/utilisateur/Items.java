@@ -1,0 +1,72 @@
+/**
+ * Copyright © 2025 GIP-RECIA (https://www.recia.fr/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package fr.recia.esidoc.api.dto.esidoc.utilisateur;
+
+import fr.recia.esidoc.api.deserializers.SafeMapDeserializer;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+
+//@Getter
+@Slf4j
+//@Getter
+@Data
+public class Items {
+
+
+    Items() {
+//        en_cours = new HashMap<>();
+//        en_retard = new HashMap<>();
+//        historique = new HashMap<>();
+    }
+
+    @JsonDeserialize(using = SafeMapDeserializer.class)
+    private Map<String, ItemContent> en_cours;
+    @JsonDeserialize(using = SafeMapDeserializer.class)
+    private Map<String, ItemContent> en_retard;
+//    private Map<String, ItemContent> en_retard;
+    @JsonDeserialize(using = SafeMapDeserializer.class)
+    private Map<String, ItemContent> historique;
+
+    @Override
+    public String toString() {
+        return "Items{" +
+//                "en_cours=" + en_cours +
+                ", en_retard=" + en_retard +
+//                ", historique=" + historique +
+                '}';
+    }
+
+    @JsonAnySetter
+    public void add(String key, Object value) {
+        log.info("add for in class Items avec un S {}, and {}", key, value);
+//        switch (key) {
+//            case "en_cours":
+//                en_cours = value;
+//            break;
+//            case "en_retard":
+//                en_retard = value;
+//            break;
+//            case "historique":
+//                historique = value;
+//            break;
+//        }
+    }
+
+}
