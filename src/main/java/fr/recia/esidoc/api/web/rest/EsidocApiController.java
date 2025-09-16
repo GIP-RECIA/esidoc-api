@@ -17,7 +17,6 @@ package fr.recia.esidoc.api.web.rest;
 
 import fr.recia.esidoc.api.dto.UtilisateursResponsePayload;
 import fr.recia.esidoc.api.services.utilisateurs.prets.PretsService;
-import fr.recia.esidoc.api.services.recherche.SearchService;
 import fr.recia.esidoc.api.services.auth.token.ServiceToken;
 import fr.recia.esidoc.api.config.functional.interfaces.UserInfoProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +38,6 @@ public class EsidocApiController {
 
     @Autowired
     PretsService pretsService;
-
-    @Autowired
-    SearchService searchService;
 
     @Autowired
     UserInfoProvider userInfoProvider;
