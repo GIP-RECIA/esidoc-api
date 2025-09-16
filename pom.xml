@@ -24,6 +24,16 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+    <distributionManagement>
+        <repository>
+            <id>esco-releases</id>
+            <url>https://nexus.recia.dev/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>esco-snapshots</id>
+            <url>https://nexus.recia.dev/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
