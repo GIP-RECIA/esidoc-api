@@ -17,9 +17,7 @@ package fr.recia.esidoc.api.config.bean;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

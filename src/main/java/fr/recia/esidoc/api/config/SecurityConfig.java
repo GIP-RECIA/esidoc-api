@@ -18,7 +18,6 @@ package fr.recia.esidoc.api.config;
 import fr.recia.esidoc.api.config.bean.SoffitProperties;
 import fr.recia.esidoc.api.config.fixes.FixedSoffitApiPreAuthenticatedProcessingFilter;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
-import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
