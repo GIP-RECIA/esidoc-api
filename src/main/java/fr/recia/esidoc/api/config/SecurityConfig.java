@@ -57,8 +57,8 @@ public class SecurityConfig {
                 );
 
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/health-check").permitAll()
-                .requestMatchers("/empruntsUtilisateur").authenticated()
+                .antMatchers("/health-check").permitAll()
+                .antMatchers("/empruntsUtilisateur").authenticated()
                 .anyRequest().denyAll()
         );
 

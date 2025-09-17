@@ -31,10 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/")
 public class EsidocApiController {
 
-
     @Autowired
     ServiceToken serviceToken;
-
 
     @Autowired
     PretsService pretsService;

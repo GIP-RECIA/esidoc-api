@@ -16,16 +16,14 @@
 package fr.recia.esidoc.api.config.bean;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-//@Data
-@Getter
-@AllArgsConstructor
+@Data
 @Slf4j
 @ConfigurationProperties(prefix = "spring.security.oauth2.client.registration.recia")
 public class OAuth2Properties {

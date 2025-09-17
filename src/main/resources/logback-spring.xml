@@ -20,7 +20,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <property name="FILE_LOG_CHARSET" value="utf-8"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <contextName>service-info-api</contextName>
+    <contextName>esidoc-api</contextName>
 
     <!-- | Expose the logback configuration via JMX + -->
     <jmxConfigurator />
