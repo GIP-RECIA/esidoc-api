@@ -16,14 +16,12 @@
 package fr.recia.esidoc.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
+@AllArgsConstructor
 public class ItemForResponse {
 
     String permalien;

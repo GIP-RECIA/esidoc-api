@@ -16,10 +16,12 @@
 package fr.recia.esidoc.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class TokenRequestPayload {
     String grant_type;
     String client_id;

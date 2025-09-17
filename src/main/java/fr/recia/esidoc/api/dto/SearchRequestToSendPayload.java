@@ -15,11 +15,11 @@
  */
 package fr.recia.esidoc.api.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class SearchRequestToSendPayload extends SearchRequestEnteringPayload{
 
     private int nb_resultats;

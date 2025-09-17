@@ -90,9 +90,7 @@ public class IdentiteEntService {
                 log.error("Error when reading response body", e);
                 throw new IdentiteEntNonObtenueException("Error when reading response body");
             }
-
-
-
+            
         } catch (RestClientException | HttpMessageNotReadableException e) {
             throw new RuntimeException(e);
         }

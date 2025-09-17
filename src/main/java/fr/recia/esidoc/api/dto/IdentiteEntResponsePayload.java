@@ -15,11 +15,11 @@
  */
 package fr.recia.esidoc.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@Getter
+@Data
+@NoArgsConstructor
 public class IdentiteEntResponsePayload {
     String id;
     String uid;
