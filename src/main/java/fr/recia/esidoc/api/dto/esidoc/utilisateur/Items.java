@@ -29,44 +29,25 @@ import java.util.Map;
 @Data
 public class Items {
 
-
-    Items() {
-//        en_cours = new HashMap<>();
-//        en_retard = new HashMap<>();
-//        historique = new HashMap<>();
-    }
+    Items() {}
 
     @JsonDeserialize(using = SafeMapDeserializer.class)
     private Map<String, ItemContent> en_cours;
     @JsonDeserialize(using = SafeMapDeserializer.class)
     private Map<String, ItemContent> en_retard;
-//    private Map<String, ItemContent> en_retard;
     @JsonDeserialize(using = SafeMapDeserializer.class)
     private Map<String, ItemContent> historique;
 
     @Override
     public String toString() {
         return "Items{" +
-//                "en_cours=" + en_cours +
                 ", en_retard=" + en_retard +
-//                ", historique=" + historique +
                 '}';
     }
 
     @JsonAnySetter
     public void add(String key, Object value) {
-        log.info("add for in class Items avec un S {}, and {}", key, value);
-//        switch (key) {
-//            case "en_cours":
-//                en_cours = value;
-//            break;
-//            case "en_retard":
-//                en_retard = value;
-//            break;
-//            case "historique":
-//                historique = value;
-//            break;
-//        }
+        log.debug("add for in class Items avec un S {}, and {}", key, value);
     }
 
 }

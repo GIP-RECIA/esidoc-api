@@ -21,4 +21,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableCaching
 public class CacheConfig {
+    // Necessary to obtain a bean of type CacheManager
 }

@@ -21,6 +21,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserInfo {
+
     String rne;
     String identiteEnt;
 
@@ -28,4 +29,5 @@ public class UserInfo {
     public String toString(){
         return String.format("User info: rne %s, identiteEnt %s", rne, identiteEnt);
     }
+
 }

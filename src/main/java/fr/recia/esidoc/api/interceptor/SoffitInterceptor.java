@@ -46,7 +46,7 @@ public class SoffitInterceptor implements HandlerInterceptor {
     MappingProperties mappingProperties;
 
     public SoffitInterceptor(SoffitHolder soffitHolder) {
-    this.soffitHolder = soffitHolder;
+        this.soffitHolder = soffitHolder;
     }
 
     @Override

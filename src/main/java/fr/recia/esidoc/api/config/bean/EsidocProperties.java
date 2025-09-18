@@ -26,12 +26,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "esidoc")
 public class EsidocProperties {
 
-
     String pretsUri = "";
     String rechercheUri = "";
     String editeur = "" ;
     int nbResultats= 1;
-
 
     @PostConstruct
     private void init() throws JsonProcessingException {

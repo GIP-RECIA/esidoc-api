@@ -48,11 +48,10 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}.%d{yyyy-MM-dd}.gz
             </fileNamePattern>
-            <maxHistory>366</maxHistory>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
             <charset>${FILE_LOG_CHARSET}</charset>
-            <!--            <Pattern>%d %-5level [%thread] %logger: %msg%n</Pattern>-->
             <Pattern>${FILE_LOG_PATTERN}</Pattern>
         </encoder>
     </appender>
@@ -81,27 +80,4 @@
 
     </springProfile>
 
-
-
 </configuration>
-
-
-
-        <!--<configuration scan="true">-->
-        <!--<property name="LOG_FILE" value="application-dev.log"/>-->
-        <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
-
-
-        <!--<logger name="org.springframework.web" level="DEBUG"/>-->
-        <!--<logger name="org.springframework.security" level="DEBUG"/>-->
-        <!--<logger name="org.springframework.security.web" level="DEBUG"/>-->
-        <!--<logger name="fr.recia.mediacentre.api" level="DEBUG"/>-->
-        <!--<logger name="com.fasterxml.jackson" level="TRACE"/>-->
-
-
-        <!--<root level="INFO">-->
-        <!--    <appender-ref ref="CONSOLE"/>-->
-        <!--</root>-->
-
-
-        <!--</configuration>-->

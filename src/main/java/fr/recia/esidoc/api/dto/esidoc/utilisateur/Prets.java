@@ -34,8 +34,4 @@ public class Prets {
                 '}';
     }
 
-//    @JsonAnySetter
-//    public void add(String key, Object value) {
-//        log.info("add for {}, and {}", key, value);
-//    }
 }

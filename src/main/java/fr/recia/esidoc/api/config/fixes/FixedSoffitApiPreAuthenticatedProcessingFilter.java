@@ -72,16 +72,11 @@ public class FixedSoffitApiPreAuthenticatedProcessingFilter extends AbstractPreA
 
         try {
             // Validate & parse the JWT
-            final Jws<Claims> claims =
-                    Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
-
+            final Jws<Claims> claims = Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
             logger.debug("Found the following pre-authenticated user:  {}", claims.toString());
-
             final List<String> groupsClaim = claims.getBody().get("groups", List.class);
-            final List<String> groupsList =
-                    groupsClaim != null ? groupsClaim : Collections.emptyList();
-            final UserDetails result =
-                    new SoffitApiUserDetails(claims.getBody().getSubject(), groupsList);
+            final List<String> groupsList = groupsClaim != null ? groupsClaim : Collections.emptyList();
+            final UserDetails result = new SoffitApiUserDetails(claims.getBody().getSubject(), groupsList);
             request.setAttribute(USER_DETAILS_REQUEST_ATTRIBUTE, result);
             return result;
         } catch (Exception e) {

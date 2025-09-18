@@ -26,7 +26,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "identite-ent-si")
 public class IdentiteEntSiProperties {
 
-
     String identiteEntSiUri = "";
     String identiteEntSiXApiKey ="";
 

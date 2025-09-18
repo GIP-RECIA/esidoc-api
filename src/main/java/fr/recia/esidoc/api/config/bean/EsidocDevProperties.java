@@ -26,10 +26,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "esidoc-dev")
 public class EsidocDevProperties {
 
-
     String identiteEnt = "";
     String rne = "" ;
-
 
     @PostConstruct
     private void init() throws JsonProcessingException {

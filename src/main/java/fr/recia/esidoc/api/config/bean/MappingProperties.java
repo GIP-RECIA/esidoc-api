@@ -26,7 +26,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "mapping")
 public class MappingProperties {
 
-
     String rneInSoffit ="";
     String utilisateursCacheName ="";
 

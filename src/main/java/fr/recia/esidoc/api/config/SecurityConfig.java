@@ -42,7 +42,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
         final AbstractPreAuthenticatedProcessingFilter filter = new FixedSoffitApiPreAuthenticatedProcessingFilter(
                 soffitProperties.getJwtSignatureKey());
 
@@ -57,7 +56,6 @@ public class SecurityConfig {
         );
 
         http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         return http.build();
     }
 
