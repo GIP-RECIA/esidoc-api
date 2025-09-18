@@ -52,17 +52,12 @@ public class SoffitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.trace("Begin pre handle in SoffitInterceptor");
-        String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        // TODO : pourquoi retourner true pour /recherche ? On a pas besoin de vérifier qui doit rechercher ?
-        if (path.startsWith("/recherche")) {
-            return true;
-        }
-
-        // TOOO : pourquoi retourner true quand token vaut null ?
+        // No soffit, so we reject access
         String token = request.getHeader("Authorization");
         if (token == null) {
-            return true;
+            log.warn("Rejecting access because no Authorization header was provided");
+            return false;
         }
 
         Base64.Decoder decoder = Base64.getUrlDecoder();

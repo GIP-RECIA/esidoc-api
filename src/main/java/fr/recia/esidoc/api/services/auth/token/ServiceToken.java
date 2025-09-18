@@ -60,7 +60,7 @@ public class ServiceToken {
                 }
             }
         }
-        log.debug("retieved token, token is {}, with expiry in {}, and now {}", tokenHolder.token, tokenHolder.expiry, Instant.now() );
+        log.debug("Retieved token from cache, token is {}, with expiry in {}, and now {}", tokenHolder.token, tokenHolder.expiry, Instant.now() );
         return tokenHolder.token;
     }
 
@@ -80,7 +80,7 @@ public class ServiceToken {
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
             HttpEntity<String> requestEntity = new HttpEntity<>(json, requestHeaders);
-            log.debug("Requesting {} to retrieve a token", url);
+            log.info("Requesting {} to retrieve a new token", url);
             ResponseEntity<TokenResponsePayload> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity,TokenResponsePayload.class);
             TokenResponsePayload responsePayload = response.getBody();
             return new TokenHolder(

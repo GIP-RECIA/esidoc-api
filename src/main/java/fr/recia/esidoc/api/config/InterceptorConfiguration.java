@@ -32,7 +32,9 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(soffitInterceptor());
+    registry.addInterceptor(soffitInterceptor())
+            .addPathPatterns("/**")
+            .excludePathPatterns("/health-check");
   }
 
   @Bean
