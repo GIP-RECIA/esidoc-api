@@ -72,11 +72,8 @@ public class FixedSoffitApiPreAuthenticatedProcessingFilter extends AbstractPreA
 
         try {
             // Validate & parse the JWT
-            logger.warn("step A");
-            logger.warn(signatureKey);
             final Jws<Claims> claims =
                     Jwts.parser().setSigningKey(signatureKey).parseClaimsJws(bearerToken);
-            logger.warn("step B");
 
             logger.debug("Found the following pre-authenticated user:  {}", claims.toString());
 
@@ -88,10 +85,9 @@ public class FixedSoffitApiPreAuthenticatedProcessingFilter extends AbstractPreA
             request.setAttribute(USER_DETAILS_REQUEST_ATTRIBUTE, result);
             return result;
         } catch (Exception e) {
-            logger.info("The following Bearer token is unusable:  '{}'", bearerToken);
-            logger.debug("Failed to validate and/or parse the specified Bearer token", e);
+            logger.error("The following Bearer token is unusable: '{}'", bearerToken);
+            logger.error("Failed to validate and/or parse the specified Bearer token", e);
         }
-
         return null;
     }
 

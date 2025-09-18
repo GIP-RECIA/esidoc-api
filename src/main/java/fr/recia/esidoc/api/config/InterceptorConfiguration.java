@@ -17,7 +17,6 @@ package fr.recia.esidoc.api.config;
 
 import fr.recia.esidoc.api.interceptor.SoffitInterceptor;
 import fr.recia.esidoc.api.interceptor.bean.SoffitHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -30,9 +29,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Profile("!test")
 @Configuration
 public class InterceptorConfiguration implements WebMvcConfigurer {
-
-
-
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
@@ -49,8 +45,6 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
   public SoffitHolder soffitHolder() {
     return new SoffitHolder();
   }
-
-
-
+  
 }
 

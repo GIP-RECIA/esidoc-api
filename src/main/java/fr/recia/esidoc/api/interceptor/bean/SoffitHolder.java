@@ -21,8 +21,6 @@ import lombok.Data;
 @Data
 public class SoffitHolder {
 
-
-
   private String sub;
   private String rne;
 

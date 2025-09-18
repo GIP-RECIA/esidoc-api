@@ -61,19 +61,13 @@ public class IdentiteEntService {
         String url = identiteEntSiProperties.getIdentiteEntSiUri().replace("{sub}",id);
 
         try {
-            log.info("REST TEMPLATE");
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
             requestHeaders.set("X-API-KEY", identiteEntSiProperties.getIdentiteEntSiXApiKey());
             HttpEntity<String> requestEntity = new HttpEntity<String>(json, requestHeaders);
 
+            log.debug("Requesting {} to retrieve an externalid", url);
             ResponseEntity<IdentiteEntResponsePayload> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity,IdentiteEntResponsePayload.class);
-
-            if(log.isDebugEnabled()){
-                log.info("--- REQUEST TO {} RESPONSE ---", url );
-                log.debug("response status code:  {}", response.getStatusCode()  );
-                log.debug("response has body:  {}", response.hasBody());
-            }
 
             if(response.getStatusCode().isError()){
                 throw new IdentiteEntNonObtenueException(String.format("Response status code %s", response.getStatusCode()));
@@ -86,7 +80,7 @@ public class IdentiteEntService {
             try {
                 IdentiteEntResponsePayload responsePayload = response.getBody();
                 return responsePayload.getId();
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 log.error("Error when reading response body", e);
                 throw new IdentiteEntNonObtenueException("Error when reading response body");
             }

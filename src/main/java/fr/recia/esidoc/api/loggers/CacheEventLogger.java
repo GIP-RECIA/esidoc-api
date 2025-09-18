@@ -23,8 +23,6 @@ import org.ehcache.event.CacheEventListener;
 public class CacheEventLogger
         implements CacheEventListener<Object, Object> {
 
-    // ...
-
     @Override
     public void onEvent(
             CacheEvent<? extends Object, ? extends Object> cacheEvent) {

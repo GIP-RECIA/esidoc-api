@@ -60,7 +60,7 @@ public class ServiceToken {
                 }
             }
         }
-        log.info("retieved token, token is {}, with expiry in {}, and now {}", tokenHolder.token, tokenHolder.expiry, Instant.now() );
+        log.debug("retieved token, token is {}, with expiry in {}, and now {}", tokenHolder.token, tokenHolder.expiry, Instant.now() );
         return tokenHolder.token;
     }
 
@@ -74,20 +74,14 @@ public class ServiceToken {
             throw new RuntimeException(e);
         }
 
-
         String url = oAuth2Properties.getOauth2TokenUri();
 
-
         try {
-            log.info("REST TEMPLATE");
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-            HttpEntity<String> requestEntity = new HttpEntity<String>(json, requestHeaders);
-
-
+            HttpEntity<String> requestEntity = new HttpEntity<>(json, requestHeaders);
+            log.debug("Requesting {} to retrieve a token", url);
             ResponseEntity<TokenResponsePayload> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity,TokenResponsePayload.class);
-            log.info("HAS BODY {}", String.valueOf(response.hasBody()));
-            log.info(String.valueOf(response.getBody()));
             TokenResponsePayload responsePayload = response.getBody();
             return new TokenHolder(
                     responsePayload.getAccess_token(),

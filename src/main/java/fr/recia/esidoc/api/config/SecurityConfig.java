@@ -46,14 +46,8 @@ public class SecurityConfig {
                 soffitProperties.getJwtSignatureKey());
 
         filter.setAuthenticationManager(authenticationManager());
-
         http.addFilter(filter);
-
-
-
-        http
-                .csrf(AbstractHttpConfigurer::disable
-                );
+        http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authz -> authz
                 .antMatchers("/health-check").permitAll()

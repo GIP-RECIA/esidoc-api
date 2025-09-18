@@ -54,53 +54,42 @@ import java.util.Optional;
 @Slf4j
 public class PretsService {
 
-
-    /*
-    Prêts d’un utilisateur : GET/ https://api-utilisateurs.qaesidoc.fr/utilisateurs_externe/prets/{editeur}/{rne}/{identite_ent}
-    editeur=recia
-    rne=9990068V
-    identite_ent :
-        B5F4326693998418B2C5374F6CE9CE29 => AUBUSSON François, enseignant
-        79C104EF22A72E99D9385D3E373626BD => BELMOKHTAR SALEM Abdeslam, enseignant
-        11F4558AF0BC6093DED0AD7415AE66B8 => HAPEL Claude, élève
-    */
-
-    private static final String  EDITEUR_SLUG = "{editeur}";
-    private static final String  RNE_SLUG = "{rne}";
-    private static final String  IDENTITE_ENT_SLUG = "{identite_ent}";
+    private static final String EDITEUR_SLUG = "{editeur}";
+    private static final String RNE_SLUG = "{rne}";
+    private static final String IDENTITE_ENT_SLUG = "{identite_ent}";
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
-    UserInfoProvider userInfoProvider;
+    private UserInfoProvider userInfoProvider;
 
     @Autowired
-    EsidocProperties esidocProperties;
+    private EsidocProperties esidocProperties;
 
     @Autowired
-    ServiceToken serviceToken;
+    private ServiceToken serviceToken;
 
     @Autowired
-    CacheManager cacheManager;
+    private CacheManager cacheManager;
 
     @Autowired
-    MappingProperties mappingProperties;
+    private MappingProperties mappingProperties;
 
-//    @Cacheable(value = "utilisateursCache", key = "#identiteEnt")
     public UtilisateursResponsePayload getInfo(){
         String identiteEnt = userInfoProvider.getUserInfo().getIdentiteEnt();
         String rne = userInfoProvider.getUserInfo().getRne();
 
-        Optional<UtilisateursResponsePayload> cacheResult =  readFromCache(identiteEnt, rne);
+        // First, try to get value from cache for this user
+        Optional<UtilisateursResponsePayload> cacheResult = readFromCache(identiteEnt, rne);
         if(cacheResult.isPresent()) {
             return cacheResult.get();
         }
 
+        // If value is not in cache then we need to make a request
         String url = esidocProperties.getPretsUri().replace(EDITEUR_SLUG, esidocProperties.getEditeur()).replace(RNE_SLUG, rne).replace(IDENTITE_ENT_SLUG, identiteEnt);
-        log.info("url is {}", url);
         try {
-            log.info("REST TEMPLATE");
+            log.debug("Requesting {}", url);
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
             requestHeaders.setBearerAuth(serviceToken.getToken());
@@ -112,69 +101,60 @@ public class PretsService {
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
 
-            assert response.getBody() != null;
-            log.info( "RESPONSE BODY {}" ,response.getBody().toString());
-
             ApiUtilisateurEsidocResponsePayload userDataEsidocResponsePayload = objectMapper.readValue(response.getBody(), ApiUtilisateurEsidocResponsePayload.class);
             List<ItemForResponse> itemForResponseList =  new ArrayList<>();
 
             //ADD NULL CHECK BEFORE
+            log.debug("Retrieving items en_retard");
             for(ItemContent itemContent: userDataEsidocResponsePayload.getPrets().getItems().getEn_retard().values()){
                 ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), true);
-                log.warn((itemForResponse.toString()));
+                log.debug("Adding item {} to list", itemForResponse);
                 itemForResponseList.add(itemForResponse);
             }
 
+            log.debug("Retrieving items en_cours");
             for(ItemContent itemContent: userDataEsidocResponsePayload.getPrets().getItems().getEn_cours().values()){
                 ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), false);
-                log.warn((itemForResponse.toString()));
+                log.debug("Adding item {} to list", itemForResponse);
                 itemForResponseList.add(itemForResponse);
             }
 
+            // Put the value in cache for this user
             writeToCache(itemForResponseList, identiteEnt, objectMapper);
 
             return new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
-        } catch (RestClientException | HttpMessageNotReadableException e) {
-            throw new RuntimeException(e);
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
+
+        } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
+            log.error("An exception occured when trying to get prets for user {}", identiteEnt, e);
             throw new RuntimeException(e);
         }
     }
 
     private Instant instantParisTimeZoneNow(){
-        ZoneId zoneParis = ZoneId.of("Europe/Paris");
         ZonedDateTime dateTimeParis = ZonedDateTime.now();
         return  dateTimeParis.toInstant();
     }
 
     private void writeToCache(List<ItemForResponse> itemForResponseList, String identiteEnt, ObjectMapper objectMapper) throws JsonProcessingException {
-
         UtilisateursResponsePayload utilisateursResponsePayload = new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
-
-        String s = objectMapper.writeValueAsString(utilisateursResponsePayload);
-
-
+        String responsePayload = objectMapper.writeValueAsString(utilisateursResponsePayload);
         Cache cache = this.cacheManager.getCache(mappingProperties.getUtilisateursCacheName());
-
         if(Objects.isNull(cache)){
-            log.warn("No cache found for {}",mappingProperties.getUtilisateursCacheName());
-            log.warn("Existing caches are {}",cacheManager.getCacheNames());
-            return;
+            log.warn("No cache found for {}", mappingProperties.getUtilisateursCacheName());
+            log.warn("Existing caches are {}", cacheManager.getCacheNames());
+        } else {
+            log.debug("Found cache with name {}", mappingProperties.getUtilisateursCacheName());
+            log.debug("Put {} in cache for key {}", responsePayload, identiteEnt);
+            cache.put(identiteEnt, responsePayload);
         }
-
-        log.debug("Found cache with name {}", mappingProperties.getUtilisateursCacheName());
-        log.debug("manual put cache");
-        cache.put(identiteEnt, s);
     }
 
     private Optional<UtilisateursResponsePayload> readFromCache(String identiteEnt, String rne){
         Cache cache = this.cacheManager.getCache(mappingProperties.getUtilisateursCacheName());
 
         if (Objects.isNull(cache)) {
-            log.warn("No cache found for {}",mappingProperties.getUtilisateursCacheName());
-            log.warn("Existing caches are {}",cacheManager.getCacheNames());
+            log.warn("No cache found for {}", mappingProperties.getUtilisateursCacheName());
+            log.warn("Existing caches are {}", cacheManager.getCacheNames());
             return Optional.empty();
         }
 
@@ -193,7 +173,6 @@ public class PretsService {
             return Optional.empty();
         }
 
-        log.debug("Stored value for key {} is not null", identiteEnt);
         if(!(valueWrapper.get() instanceof String)){
             log.error("Store value in cache is not of type String");
             return Optional.empty();
@@ -203,16 +182,15 @@ public class PretsService {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
-
-        UtilisateursResponsePayload utilisateursResponsePayload = null;
+        UtilisateursResponsePayload utilisateursResponsePayload;
         try {
             utilisateursResponsePayload = objectMapper.readValue(s,UtilisateursResponsePayload.class);
         } catch (JsonProcessingException e) {
-            log.error("Exception when parsing string stored in cache",e);
+            log.error("Exception when parsing string stored in cache", e);
             return Optional.empty();
         }
 
-        log.debug("Returning parsed value {}", utilisateursResponsePayload.toString());
+        log.debug("Returning cached value {}", utilisateursResponsePayload);
         return Optional.of(utilisateursResponsePayload);
     }
 
