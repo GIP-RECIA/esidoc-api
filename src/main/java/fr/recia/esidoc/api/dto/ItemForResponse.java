@@ -25,16 +25,8 @@ import lombok.NoArgsConstructor;
 public class ItemForResponse {
 
     String permalien;
-
-    @Override
-    public String toString() {
-        return "ItemForResponse{" +
-                "permalien='" + permalien + '\'' +
-                ", titre='" + titre + '\'' +
-                ", retard=" + retard +
-                '}';
-    }
-
     String titre;
+    String dateRetour;
     boolean retard;
+
 }

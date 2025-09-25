@@ -113,14 +113,14 @@ public class PretsService {
             //ADD NULL CHECK BEFORE
             log.debug("Retrieving items en_retard");
             for(ItemContent itemContent: userDataEsidocResponsePayload.getPrets().getItems().getEn_retard().values()){
-                ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), true);
+                ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), itemContent.getDate_retour(), true);
                 log.debug("Adding item {} to list", itemForResponse);
                 itemForResponseList.add(itemForResponse);
             }
 
             log.debug("Retrieving items en_cours");
             for(ItemContent itemContent: userDataEsidocResponsePayload.getPrets().getItems().getEn_cours().values()){
-                ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), false);
+                ItemForResponse itemForResponse = new ItemForResponse(itemContent.getPermalien(), itemContent.getTitre(), itemContent.getDate_retour(), false);
                 log.debug("Adding item {} to list", itemForResponse);
                 itemForResponseList.add(itemForResponse);
             }
