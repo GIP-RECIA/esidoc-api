@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.recia.esidoc.api.services.auth.token.ServiceToken;
 import fr.recia.esidoc.api.config.functional.interfaces.UserInfoProvider;
+import fr.recia.esidoc.api.services.identite.ent.exceptions.EsidocRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -80,6 +81,8 @@ public class PretsService {
         String identiteEnt = userInfoProvider.getUserInfo().getIdentiteEnt();
         String rne = userInfoProvider.getUserInfo().getRne();
 
+        log.info("Requesting prets for {} on etab {}", identiteEnt, rne);
+
         // First, try to get value from cache for this user
         Optional<UtilisateursResponsePayload> cacheResult = readFromCache(identiteEnt, rne);
         if(cacheResult.isPresent()) {
@@ -96,6 +99,9 @@ public class PretsService {
             HttpEntity<String> requestEntity = new HttpEntity<String>(requestHeaders);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+            if(response.hasBody()){
+                log.trace("Received response from API : {}", response.getBody());
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
@@ -126,13 +132,13 @@ public class PretsService {
 
         } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
             log.error("An exception occured when trying to get prets for user {}", identiteEnt, e);
-            throw new RuntimeException(e);
+            throw new EsidocRequestException(e.getMessage());
         }
     }
 
     private Instant instantParisTimeZoneNow(){
         ZonedDateTime dateTimeParis = ZonedDateTime.now();
-        return  dateTimeParis.toInstant();
+        return dateTimeParis.toInstant();
     }
 
     private void writeToCache(List<ItemForResponse> itemForResponseList, String identiteEnt, ObjectMapper objectMapper) throws JsonProcessingException {
