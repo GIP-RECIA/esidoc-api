@@ -33,7 +33,7 @@ public class ItemContent {
 
     @JsonAnySetter
     public void add(String key, Object value) {
-        log.info("add for {}, and {}", key, value);
+        log.trace("add for {}, and {}", key, value);
     }
 
     @Override
