@@ -64,22 +64,13 @@ public class IdentiteEntService {
             return value;
         }
 
-        TokenRequestPayload tokenRequestPayload = new TokenRequestPayload(oAuth2Properties.getAuthorizationGrantType(), oAuth2Properties.getClientId(), oAuth2Properties.getClientSecret());
-        String json;
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        try {
-            json  = ow.writeValueAsString(tokenRequestPayload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
         String url = identiteEntSiProperties.getIdentiteEntSiUri().replace("{sub}",id);
 
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
             requestHeaders.set("X-API-KEY", identiteEntSiProperties.getIdentiteEntSiXApiKey());
-            HttpEntity<String> requestEntity = new HttpEntity<String>(json, requestHeaders);
+            HttpEntity<String> requestEntity = new HttpEntity<String>(requestHeaders);
 
             log.debug("Requesting {} to retrieve an externalid", url);
             ResponseEntity<IdentiteEntResponsePayload> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, IdentiteEntResponsePayload.class);
