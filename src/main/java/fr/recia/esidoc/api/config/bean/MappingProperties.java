@@ -26,16 +26,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "mapping")
 public class MappingProperties {
 
-    String rneInSoffit ="";
-    String utilisateursCacheName ="";
-
-    @Override
-    public String toString() {
-        return "MappingProperties{" +
-                "rneInSoffit='" + rneInSoffit + '\'' +
-                ", utilisateursCacheName='" + utilisateursCacheName + '\'' +
-                '}';
-    }
+    String rneInSoffit;
+    String utilisateursCacheName;
+    String identiteEntCacheName;
+    String errorCacheName;
 
     @PostConstruct
     private void init() throws JsonProcessingException {

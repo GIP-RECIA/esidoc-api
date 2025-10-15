@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import fr.recia.esidoc.api.config.bean.IdentiteEntSiProperties;
+import fr.recia.esidoc.api.config.bean.MappingProperties;
 import fr.recia.esidoc.api.config.bean.OAuth2Properties;
 import fr.recia.esidoc.api.dto.IdentiteEntResponsePayload;
 import fr.recia.esidoc.api.dto.TokenRequestPayload;
@@ -42,6 +43,9 @@ import javax.cache.CacheManager;
 public class IdentiteEntService {
 
     @Autowired
+    private MappingProperties mappingProperties;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -58,8 +62,8 @@ public class IdentiteEntService {
         log.trace("Call to getIdentiteEnt for {}", id);
 
         // If value is cached, no need to request the API
-        if(cacheManager.getCache("identiteEntCache").containsKey(id)){
-            String value = cacheManager.getCache("identiteEntCache").get(id).toString();
+        if(cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).containsKey(id)){
+            String value = cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).get(id).toString();
             log.debug("Returned cached value {} for {}", value, id);
             return value;
         }
@@ -86,7 +90,7 @@ public class IdentiteEntService {
             try {
                 IdentiteEntResponsePayload responsePayload = response.getBody();
                 // Before returning we put the value in cache
-                cacheManager.getCache("identiteEntCache").put(id, responsePayload.getId());
+                cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).put(id, responsePayload.getId());
                 log.debug("Put value {} in cache for {}", responsePayload.getId(), id);
                 return responsePayload.getId();
             } catch (NullPointerException e) {
