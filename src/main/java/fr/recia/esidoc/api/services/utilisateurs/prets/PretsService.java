@@ -83,7 +83,14 @@ public class PretsService {
 
         log.info("Requesting prets for {} on etab {}", identiteEnt, rne);
 
-        // First, try to get value from cache for this user
+        // Try to get value from error cache for this user
+        Cache.ValueWrapper errorCacheResult = this.cacheManager.getCache(mappingProperties.getErrorCacheName()).get(identiteEnt);
+        if(errorCacheResult != null){
+            log.info("Request found in error cache for user {}", identiteEnt);
+            throw new EsidocRequestException("Request is still in error cache for user " + identiteEnt);
+        }
+
+        // Try to get value from real cache for this user
         Optional<UtilisateursResponsePayload> cacheResult = readFromCache(identiteEnt, rne);
         if(cacheResult.isPresent()) {
             return cacheResult.get();
@@ -127,11 +134,12 @@ public class PretsService {
 
             // Put the value in cache for this user
             writeToCache(itemForResponseList, identiteEnt, objectMapper);
-
             return new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
 
         } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
             log.error("An exception occured when trying to get prets for user {}", identiteEnt, e);
+            log.info("Got an error, storing it in cache for {}", identiteEnt);
+            this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, "Y");
             throw new EsidocRequestException(e.getMessage());
         }
     }
@@ -199,7 +207,5 @@ public class PretsService {
         log.debug("Returning cached value {}", utilisateursResponsePayload);
         return Optional.of(utilisateursResponsePayload);
     }
-
-
 
 }
