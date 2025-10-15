@@ -31,8 +31,9 @@ Pour récupérer la liste des emprunts, on a besoin de faire plusieurs appels AP
 ## Caches
 
 Afin de ne pas faire de requêtes inutiles plusieurs caches sont mis en place :
-- Un cache au niveau des requêtes à l'API esidoc (user <-> prets)
-- Un cache au niveau des requêtes à l'API si-ent-api (uid <-> external_id)
+- Un cache au niveau des requêtes à l'API esidoc (user <-> prets) ;
+- Un cache au niveau des requêtes à l'API si-ent-api (uid <-> external_id) ;
+- Un cache pour sauvegarder les requêtes en erreur, avec une durée de vie plus courte.
 
 Comme le token OAuth2.0 est global il est stocké directement au niveau de l'application (voir `ServiceToken`).
 

@@ -86,7 +86,7 @@ public class PretsService {
         // Try to get value from error cache for this user
         Cache.ValueWrapper errorCacheResult = this.cacheManager.getCache(mappingProperties.getErrorCacheName()).get(identiteEnt);
         if(errorCacheResult != null){
-            log.info("Request found in error cache for user {}", identiteEnt);
+            log.debug("Request found in error cache for user {}", identiteEnt);
             throw new EsidocRequestException("Request is still in error cache for user " + identiteEnt);
         }
 
