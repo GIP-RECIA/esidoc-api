@@ -137,7 +137,8 @@ public class PretsService {
             return new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
 
         } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
-            log.error("An exception occured when trying to get prets for user {}", identiteEnt, e);
+            log.error("An exception occured when trying to get prets for user {}", identiteEnt);
+            log.debug("Full stacktrace for error is : ", e);
             log.info("Got an error, storing it in cache for {}", identiteEnt);
             this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, "Y");
             throw new EsidocRequestException(e.getMessage());
