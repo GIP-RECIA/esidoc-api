@@ -24,7 +24,6 @@ import fr.recia.esidoc.api.dto.esidoc.utilisateur.ItemContent;
 import fr.recia.esidoc.api.dto.esidoc.utilisateur.ApiUtilisateurEsidocResponsePayload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.recia.esidoc.api.services.auth.token.ServiceToken;
 import fr.recia.esidoc.api.config.functional.interfaces.UserInfoProvider;
@@ -36,15 +35,16 @@ import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class PretsService {
         Cache.ValueWrapper errorCacheResult = this.cacheManager.getCache(mappingProperties.getErrorCacheName()).get(identiteEnt);
         if(errorCacheResult != null){
             log.debug("Request found in error cache for user {}", identiteEnt);
-            throw new EsidocRequestException("Request is still in error cache for user " + identiteEnt);
+            throw (EsidocRequestException) errorCacheResult.get();
         }
 
         // Try to get value from real cache for this user
@@ -136,12 +136,18 @@ public class PretsService {
             writeToCache(itemForResponseList, identiteEnt, objectMapper);
             return new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
 
+        } catch (HttpStatusCodeException e) {
+            log.error("Erreur API : HTTP {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            EsidocRequestException esidocRequestException = new EsidocRequestException(e.getResponseBodyAsString(), e.getStatusCode());
+            this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, esidocRequestException);
+            throw esidocRequestException;
         } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
             log.error("An exception occured when trying to get prets for user {}", identiteEnt);
             log.debug("Full stacktrace for error is : ", e);
             log.info("Got an error, storing it in cache for {}", identiteEnt);
-            this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, "Y");
-            throw new EsidocRequestException(e.getMessage());
+            EsidocRequestException esidocRequestException = new EsidocRequestException(e.getMessage(), HttpStatus.BAD_REQUEST);
+            this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, esidocRequestException);
+            throw esidocRequestException;
         }
     }
 

@@ -70,7 +70,7 @@
 
     <cache alias="errorCache">
         <key-type>java.lang.String</key-type>
-        <value-type>java.lang.String</value-type>
+        <value-type>fr.recia.esidoc.api.services.identite.ent.exceptions.EsidocRequestException</value-type>
         <expiry>
             <ttl unit="seconds">600</ttl>
         </expiry>

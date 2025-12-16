@@ -15,14 +15,16 @@
  */
 package fr.recia.esidoc.api.services.identite.ent.exceptions;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@Getter
-public class EsidocRequestException extends RuntimeException {
-    private final HttpStatus status;
-    public EsidocRequestException(String message, HttpStatus status) {
-        super(message);
-        this.status = status;
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EsidocRequestException.class)
+    public ResponseEntity<String> handleEsidocException(EsidocRequestException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
     }
+
 }
