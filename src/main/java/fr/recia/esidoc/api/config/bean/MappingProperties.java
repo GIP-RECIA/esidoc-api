@@ -30,6 +30,7 @@ public class MappingProperties {
     String utilisateursCacheName;
     String identiteEntCacheName;
     String errorCacheName;
+    String etabErrorCacheName;
 
     @PostConstruct
     private void init() throws JsonProcessingException {

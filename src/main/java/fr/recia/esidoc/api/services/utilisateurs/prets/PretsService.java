@@ -83,6 +83,13 @@ public class PretsService {
 
         log.info("Requesting prets for {} on etab {}", identiteEnt, rne);
 
+        // Try to get value for error cache for this etab
+        Cache.ValueWrapper etabErrorCacheResult = this.cacheManager.getCache(mappingProperties.getEtabErrorCacheName()).get(rne);
+        if(etabErrorCacheResult != null){
+            log.debug("Request found in etab error cache for etab {}", rne);
+            throw (EsidocRequestException) etabErrorCacheResult.get();
+        }
+
         // Try to get value from error cache for this user
         Cache.ValueWrapper errorCacheResult = this.cacheManager.getCache(mappingProperties.getErrorCacheName()).get(identiteEnt);
         if(errorCacheResult != null){
@@ -136,10 +143,16 @@ public class PretsService {
             writeToCache(itemForResponseList, identiteEnt, objectMapper);
             return new UtilisateursResponsePayload(itemForResponseList, instantParisTimeZoneNow());
 
+        // If there is an error put the response in error cache to avoid making another request later
         } catch (HttpStatusCodeException e) {
             log.error("Erreur API : HTTP {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
             EsidocRequestException esidocRequestException = new EsidocRequestException(e.getResponseBodyAsString(), e.getStatusCode());
             this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, esidocRequestException);
+            // If we have this message we know all the users from this establishment will be in error
+            if(e.getResponseBodyAsString().equals("interconnexion esidoc/ENT invalide")){
+                log.warn("Etab {} is not in esidoc API !", rne);
+                this.cacheManager.getCache(mappingProperties.getEtabErrorCacheName()).put(rne, esidocRequestException);
+            }
             throw esidocRequestException;
         } catch (RestClientException | HttpMessageNotReadableException | JsonProcessingException e) {
             log.error("An exception occured when trying to get prets for user {}", identiteEnt);
