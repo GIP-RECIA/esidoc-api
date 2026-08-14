@@ -108,7 +108,7 @@ public class PretsService {
         try {
             log.debug("Requesting {}", url);
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             requestHeaders.setBearerAuth(serviceToken.getToken());
             HttpEntity<String> requestEntity = new HttpEntity<String>(requestHeaders);
 
@@ -145,8 +145,8 @@ public class PretsService {
 
         // If there is an error put the response in error cache to avoid making another request later
         } catch (HttpStatusCodeException e) {
-            log.error("Erreur API : HTTP {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            EsidocRequestException esidocRequestException = new EsidocRequestException(e.getResponseBodyAsString(), e.getStatusCode());
+            log.error("Erreur API for URL {} : HTTP {} - {}", url, e.getStatusCode(), e.getResponseBodyAsString());
+            EsidocRequestException esidocRequestException = new EsidocRequestException(e.getResponseBodyAsString(), (HttpStatus) e.getStatusCode());
             this.cacheManager.getCache(mappingProperties.getErrorCacheName()).put(identiteEnt, esidocRequestException);
             // If we have this message we know all the users from this establishment will be in error
             if(e.getResponseBodyAsString().equals("interconnexion esidoc/ENT invalide")){

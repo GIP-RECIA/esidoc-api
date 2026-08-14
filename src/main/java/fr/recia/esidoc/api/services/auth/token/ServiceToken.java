@@ -78,7 +78,7 @@ public class ServiceToken {
 
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> requestEntity = new HttpEntity<>(json, requestHeaders);
             log.info("Requesting {} to retrieve a new token", url);
             ResponseEntity<TokenResponsePayload> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity,TokenResponsePayload.class);
