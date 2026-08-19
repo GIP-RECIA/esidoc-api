@@ -17,6 +17,8 @@ package fr.recia.esidoc.api.config;
 
 import fr.recia.esidoc.api.config.bean.SoffitProperties;
 import fr.recia.esidoc.api.config.fixes.FixedSoffitApiPreAuthenticatedProcessingFilter;
+import fr.recia.notifications.soffit_java_client.SoffitJwtAuthenticationFilter;
+import fr.recia.notifications.soffit_java_client.SoffitJwtValidator;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,10 +28,30 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 @Configuration
 public class SecurityConfig {
+
+
+
+    public SecurityConfig( SoffitProperties soffitProperties) {
+        this.jwtProperties = soffitProperties;
+    }
+
+    private final SoffitProperties jwtProperties;
+
+
+    @Bean
+    SoffitJwtValidator soffitJwtValidator() {
+        return new SoffitJwtValidator(jwtProperties.getJwtSignatureKey());
+    }
+
+    @Bean
+    SoffitJwtAuthenticationFilter soffitJwtAuthenticationFilter(SoffitJwtValidator validator) {
+        return new SoffitJwtAuthenticationFilter(validator);
+    }
 
     @Autowired
     SoffitProperties soffitProperties;
@@ -40,20 +62,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SoffitJwtAuthenticationFilter filter) {
 
-        final AbstractPreAuthenticatedProcessingFilter filter = new FixedSoffitApiPreAuthenticatedProcessingFilter(
-                soffitProperties.getJwtSignatureKey());
-
-        filter.setAuthenticationManager(authenticationManager());
-        http.addFilter(filter);
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authz -> authz
-                .antMatchers("/health-check").permitAll()
-                .antMatchers("/empruntsUtilisateur").authenticated()
+                .requestMatchers("/health-check").permitAll()
+                .requestMatchers("/empruntsUtilisateur").authenticated()
                 .anyRequest().denyAll()
-        );
+        )
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+        ;
 
         http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

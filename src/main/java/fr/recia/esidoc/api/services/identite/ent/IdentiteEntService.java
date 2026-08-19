@@ -26,6 +26,8 @@ import fr.recia.esidoc.api.dto.TokenRequestPayload;
 import fr.recia.esidoc.api.services.identite.ent.exceptions.IdentiteEntNonObtenueException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,7 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.cache.CacheManager;
+import java.util.Objects;
+
 
 @Service
 @Slf4j
@@ -62,8 +65,17 @@ public class IdentiteEntService {
         log.trace("Call to getIdentiteEnt for {}", id);
 
         // If value is cached, no need to request the API
-        if(cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).containsKey(id)){
-            String value = cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).get(id).toString();
+//        if(Objects.nonNull( cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).get(id))){
+//            String value = cacheManager.getCache(mappingProperties.getIdentiteEntCacheName()).get(id).toString();
+//            log.debug("Returned cached value {} for {}", value, id);
+//            return value;
+//        }
+
+        Cache cache =  cacheManager.getCache(mappingProperties.getIdentiteEntCacheName());
+
+        String value = cache.get(id, String.class);
+
+        if (value != null) {
             log.debug("Returned cached value {} for {}", value, id);
             return value;
         }
@@ -72,7 +84,7 @@ public class IdentiteEntService {
 
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
             requestHeaders.set("X-API-KEY", identiteEntSiProperties.getIdentiteEntSiXApiKey());
             HttpEntity<String> requestEntity = new HttpEntity<String>(requestHeaders);
 
