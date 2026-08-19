@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>fr.recia.esidoc.api</groupId>
 	<artifactId>esidoc-api</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>war</packaging>
 	<name>esidoc</name>
 	<inceptionYear>2025</inceptionYear>
@@ -18,7 +18,7 @@
 	<scm>
 		<connection>scm:git:ssh://git@github.com/GIP-RECIA/esidoc-api.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/esidoc-api.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>1.0.0</tag>
 		<url>https://github.com/GIP-RECIA/esidoc-api.git</url>
 	</scm>
 	<properties>
