@@ -16,10 +16,10 @@
 	<inceptionYear>2025</inceptionYear>
 	<url/>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:ssh://git@github.com/GIP-RECIA/esidoc-api.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/esidoc-api.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/GIP-RECIA/esidoc-api.git</url>
 	</scm>
 	<properties>
 		<java.version>25</java.version>
