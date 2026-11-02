@@ -1,0 +1,34 @@
+# For more information see: https://docs.github.com/en/actions/
+
+name: Dedupe CI
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+    paths: [ 'package.json', 'yarn.lock' ]
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install deduplicate packages
+        run: yarn dedupe
+
+      - name: Commit and push new yarn.lock
+        run: |
+          if [[ `git status --porcelain yarn.lock` ]]; then
+            git config --global user.name 'github-actions'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add yarn.lock
+            git commit -m "build(yarn): de-duplicate entries"
+            git push
+          fi
