@@ -23,7 +23,7 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
-		<lombok.version>1.18.42</lombok.version>
+		<lombok.version>1.18.48</lombok.version>
 	</properties>
     <distributionManagement>
         <repository>
